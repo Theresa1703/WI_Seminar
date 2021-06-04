@@ -12,16 +12,41 @@ library("tidyverse")
 
 ## Einführung
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Datensatz lesen und generellen Überblick verschaffen.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
+```{r events, include=FALSE}
 event_log <- read_delim("./data/event_log.csv", delim=";")
-
+```
+Zusammenfassung ausgeben
+```{r summary}
 summary(event_log)
+
+```
+
+Ersten 10 Datensätzen ausgeben
+```{r head}
 head(event_log, n=10)
+
+```
+
+Wertebereich für interessante Spalten ausgeben
+```{r }
 unique(event_log$ACTIVITY)
+unique(event_log$DEVICETYPE)
+unique(event_log$SERVICEPOINT)
+```
+
+## Datenreinigung
+
+Datensätze ohne Angabe zu Serviepoint oder Gerät ausschließen.
+
+```{r na omit}
+clean_events <- na.omit(event_log)
+```
+
+Datensatz aus unvollständigen Sätzen abspalten.
+```{r corrupted}
+corrupted_events <- subset(event_log,is.na(DEVICETYPE) | is.na(SERVICEPOINT))
 ```
 
 ## Including Plots
