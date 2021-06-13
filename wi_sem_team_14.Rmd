@@ -49,6 +49,39 @@ Datensatz aus unvollständigen Sätzen abspalten.
 ```{r corrupted}
 corrupted_events <- subset(event_log,is.na(DEVICETYPE) | is.na(SERVICEPOINT))
 ```
+## Datenanalyse
+
+### Grundlagen
+
+Wie viele verschiedene Bearbeitungsfälle gibt es?
+
+```{r unique cases}
+unique(clean_events$CASE_ID) %>% length()
+```
+
+### Visualisierung
+
+5-Tage-Reperatur-Quote nach Servicepoint
+
+```{r 5-day-quota}
+library(dplyr)
+
+# das reperaturzeit flag steht in jedem eintrag eines CASEs, uns langt aber ein 
+# Eintrag je CASE
+distinct_cases <- distinct(clean_events, CASE_ID, .keep_all = TRUE)
+
+# nach Servicepoint gruppieren und die flags aufsummieren
+by_servicep <- group_by(distinct_cases, SERVICEPOINT) %>%
+  summarise(fivedaysum = sum(REPAIR_IN_TIME_5D), all = n())
+# quote berechnen mit anzahl der "schnellen" CASEs
+by_servicep$quota = by_servicep$fivedaysum / by_servicep$all * 100
+
+# plot zeichnen
+plot <- ggplot(data = by_servicep, aes(x=SERVICEPOINT, y=quota)) +
+  geom_bar(stat="identity") + ylab("\"In time\" repair quota in %")+
+  xlab("Servicepoint")
+plot
+```
 
 ## Including Plots
 
