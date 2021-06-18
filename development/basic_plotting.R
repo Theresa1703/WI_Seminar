@@ -33,19 +33,33 @@ unique(clean_logs$SERVICEPOINT)
 
 # servicepoints
 servicepoints <- table(clean_logs$SERVICEPOINT)
-barplot(servicepoints)
+barplot(main="logs per servicepoint",servicepoints)
 
 # rep in time
 timely_repair <- table(clean_logs$REPAIR_IN_TIME_5D)
-barplot(timely_repair)
+barplot(main="repair in time", timely_repair)
 
 # activity count
 activity_count <- table(clean_logs$ACTIVITY)
-barplot(activity_count)
+barplot(main="logs per activitytype", activity_count)
 
 # logs per devicetype
 devicetypes_counter <- table(clean_logs$DEVICETYPE)
-barplot(devicetypes_counter)
+barplot(main="logs per devicetype", devicetypes_counter)
+
+# plottig the timestamps with no real goal in mind
+timestamps <- table(clean_logs$TIMESTAMP)
+barplot(main="timestamps", timestamps)
+
+# histograms
+
+hist(main="repairs in 5D", clean_logs$REPAIR_IN_TIME_5D)
+
+hist(main="timestamps normal hist", clean_logs$TIMESTAMP, breaks=12)
+hist(main="freq of timestamps (not working)", timestamps, breaks=24)
+
+hist(main="freq of devicetypes", devicetypes_counter)
+
 
 # cleaning after everything is done
 p_unload(all)
