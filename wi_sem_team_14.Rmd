@@ -6,8 +6,13 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
+require(dplyr)
+require(broom)
+require(ggplot2)
+require(cluster)
 knitr::opts_chunk$set(echo = TRUE)
 library("tidyverse")
+library(dplyr)
 ```
 
 ## Einführung
@@ -64,7 +69,6 @@ unique(clean_events$CASE_ID) %>% length()
 5-Tage-Reperatur-Quote nach Servicepoint
 
 ```{r 5-day-quota}
-library(dplyr)
 
 # das reperaturzeit flag steht in jedem eintrag eines CASEs, uns langt aber ein 
 # Eintrag je CASE
@@ -81,6 +85,30 @@ plot <- ggplot(data = by_servicep, aes(x=SERVICEPOINT, y=quota)) +
   geom_bar(stat="identity") + ylab("\"In time\" repair quota in %")+
   xlab("Servicepoint")
 plot
+```
+Clusteranalyse Anfälligkeit der Geräte
+```{r cluster}
+case_total_duration <- group_by(clean_events, CASE_ID) %>%
+  group_by(DEVICETYPE, .add = TRUE) %>%
+  summarise(timemax = max(TIMESTAMP), timemin = min(TIMESTAMP), duration = timemax - timemin)
+
+avg_duration_by_device <- case_total_duration %>%
+  group_by(DEVICETYPE) %>%
+  summarize(case_count = n(), avg_time = mean(duration))
+
+avg_duration_by_device$avg_time <- as.numeric(avg_duration_by_device$avg_time, units="days")
+
+ggplot(avg_duration_by_device, aes(case_count, avg_time)) + geom_point()
+
+h.cluster <- avg_duration_by_device %>% dist(., method = "euclidean") %>% hclust(., method="ward.D")
+plot(h.cluster)
+
+p.cluster <- avg_duration_by_device %>% select(avg_time, case_count) %>% kmeans(., 4)
+p.cluster$cluster <- as.factor(p.cluster$cluster)
+
+ggplot(avg_duration_by_device, aes(case_count, avg_time, label = DEVICETYPE)) + 
+  scale_fill_discrete(name = "Cluster") + 
+  geom_label(aes(fill = p.cluster$cluster), colour = "white", fontface = "bold", size = 2)
 ```
 
 ## Including Plots
