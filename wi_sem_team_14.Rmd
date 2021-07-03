@@ -120,3 +120,13 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+## Celonis
+
+![Happy Path](C:/Users/Theresa/Documents/R/WI Seminar/Celonis/Happy Path.jpg)
+![Happy Path](C:/Users/Theresa/Documents/R/WI Seminar/Celonis/Top10 Most Common.jpg)
+![Happy Path](C:/Users/Theresa/Documents/R/WI Seminar/Celonis/Top 10 longest Throughput Time.jpg)
+![Happy Path](C:/Users/Theresa/Documents/R/WI Seminar/Celonis/Top 10 shortest Throughput Time.jpg)
+
+
